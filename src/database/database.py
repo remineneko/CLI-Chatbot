@@ -52,7 +52,3 @@ class DBSession:
         self._use_db(cmd)
         entries = self.dbcursor.fetchall()
         return entries
-    
-    def clear_table(self):
-        cmd = "TRUNCATE ChatSession;"
-        self._use_db(cmd)
