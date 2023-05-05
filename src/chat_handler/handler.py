@@ -1,6 +1,7 @@
 import openai
 from .exceptions import InvalidAPIKey
 from .models import supported_models
+from .response import ChatResponse
 
 
 class ChatHandler:
@@ -13,14 +14,14 @@ class ChatHandler:
         
     def respond(self, query: str, model: str, temperature=None, max_tokens=None):
         if model in supported_models:
-            return openai.ChatCompletion.create(
+            return ChatResponse(openai.ChatCompletion.create(
                 model=model,
                 messages=query
-            )
+            ))
         else:
-            return openai.ChatCompletion.create(
-                engine=model,
+            return ChatResponse(openai.Completion.create(
+                model=model,
                 prompt=query,
                 temperature=temperature,
                 max_tokens=max_tokens
-            )
+            ))
