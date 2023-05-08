@@ -15,16 +15,16 @@ class SessionHandler:
         self._history = history
         self._past_interactions: List[Union[CompletionPrompt, ChatCompletionPrompt, ChatResponse]] = history.past_interactions if history else None
         self._sesh_responses: List[Union[CompletionPrompt, ChatCompletionPrompt, ChatResponse]] = []
-        self._db_sesh = database
-        self._logger = logger
+        self._db_sesh: DBSession = database
+        self._logger: logging.Logger = logger
 
     def save_response(self, response: ChatResponse):
         self._sesh_responses.append(response)
 
-    def save_prompt(self, prompt: Union[ChatCompletionPrompt, ChatCompletionPrompt]):
+    def save_prompt(self, prompt: Union[CompletionPrompt, ChatCompletionPrompt]):
         self._sesh_responses.append(prompt)
     
-    def _gen_title(self, first_input: str):
+    def gen_title(self, first_input: str):
         """
         Generates the title for the chat session.
         
@@ -69,7 +69,8 @@ class SessionHandler:
                 saving_dict = {
                     "title": title,
                     "past_interactions": chat_data,
-                    "filename": file_name
+                    "filename": file_name,
+                    "past_summary": ''
                 }
                 json.dump(saving_dict, f)
             self._logger.info(f"History id {fn_no_ext} has been created.")

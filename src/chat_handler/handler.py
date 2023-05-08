@@ -3,6 +3,7 @@ import openai
 from .exceptions import InvalidAPIKey
 from .models import supported_models
 from .response import ChatResponse
+from typing import List, Dict, Union
 
 
 class ChatHandler:
@@ -15,7 +16,7 @@ class ChatHandler:
             self._logger.critical("Invalid OpenAI API Key provided.")
             raise InvalidAPIKey("The API Key provided is invalid. Please double check your key.")
         
-    def respond(self, query: str, model: str, temperature=None, max_tokens=None):
+    def respond(self, query: Union[str, List[Dict[str, str]]], model: str, temperature=None, max_tokens=None):
         if model in supported_models:
             return ChatResponse(openai.ChatCompletion.create(
                 model=model,

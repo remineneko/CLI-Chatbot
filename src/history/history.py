@@ -39,5 +39,13 @@ class ChatHistory:
         return self._past_data.filename
     
     @property
+    def summary(self):
+        return self._past_data.summary
+    
+    @summary.setter
+    def summary(self, new_summary):
+        self._past_data.summary = new_summary
+    
+    @property
     def file_name_no_ext(self):
         return os.path.splitext(self._past_data.filename)[0]
