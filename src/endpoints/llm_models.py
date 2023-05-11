@@ -12,7 +12,7 @@ class LLMModel(ABC):
             model_name (_type_): _description_
             required_imports (tuple, optional): _description_. Defaults to (None, None).
         """
-        self.model_name = model
+        self.model = model
         self.__dict__.update(kwargs)
 
     @abstractmethod

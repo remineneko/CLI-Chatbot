@@ -17,27 +17,10 @@ def parse_history(history_file: Union[Path, str], model: Union[GPT4All_J, GPT4Al
     """
 
     history = ChatHistory(history_file)
-    past_interactions: List[ChatCompletionPrompt, CompletionPrompt, ChatResponse] = history_file.past_interactions
-
-    # with the past interactions, I will tell a LLM model to summarize this for me.
-    # not gpt-3.5-turbo though, OpenAI doesn't allow it to do that kind of job, I think.
-    # so now, I would rely on a... hopefully decent model for the job.
-
-    starter_prompt = """
-    I will provide you a chain of exchanges between me and another person ("Me" for me and "B" for the other person) and/or a summary of conclusions that have been drawn from our previous conversations.
-    From the summary (if given, which will be denoted by a "Summary" word) and the exchanges, please give me a new summary of conclusions that can be drawn.\n
-    Limit the conclusions to 15 words.\n
-    """
-
-    convo = ''
-
-    summary_prefix = "Summary: "
+    past_interactions: List[ChatCompletionPrompt, CompletionPrompt, ChatResponse] = history.history
     user_prefix = "Me: "
     bot_prefix = "B: "
 
-    if history.summary:
-        convo += summary_prefix + history.summary + "\n"
-    
     for interaction in past_interactions:
         if type(interaction) in [ChatCompletionPrompt, CompletionPrompt]:
             convo += user_prefix + interaction.user_prompt + "\n"
