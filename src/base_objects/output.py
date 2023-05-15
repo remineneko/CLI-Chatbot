@@ -1,12 +1,12 @@
 from dataclasses import dataclass
 from .screen import Screen
-from typing import Dict
+from typing import Dict, Union
 from abc import ABC, abstractmethod
 
 
 @dataclass
 class ChatOutput:
-    output: Dict
+    output: Union[Dict, str]
 
     @property
     @abstractmethod
