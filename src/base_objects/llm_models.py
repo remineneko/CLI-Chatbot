@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
-from .source import Source
+from .source import InputStream
 from .output import ChatOutput
-
+from typing import Union
 
 class LLMModel(ABC):
-    def __init__(self, model, **kwargs):
+    def __init__(self, model):
         """
         Initialize the LLMModel class.
 
@@ -13,8 +13,7 @@ class LLMModel(ABC):
             required_imports (tuple, optional): _description_. Defaults to (None, None).
         """
         self.model = model
-        self.__dict__.update(kwargs)
 
     @abstractmethod
-    def generate(self, prompt: Source) -> ChatOutput:
+    def generate(self, prompt: Union[str,InputStream]) -> ChatOutput:
         pass

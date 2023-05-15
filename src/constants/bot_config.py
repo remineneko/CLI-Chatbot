@@ -1,6 +1,7 @@
 from constants.exceptions import *
 import os
 import logging
+from src.logger import ChatbotLogger
 
 OPENAI_KEY = 'OPENAI_API_KEY'
 DB_NAME = "DB_NAME"
@@ -11,7 +12,7 @@ class ChatbotConfig:
     """
     Sets up basic configurations for the bot.
     """
-    def __init__(self, logger: logging.Logger):
+    def __init__(self, logger = ChatbotLogger()):
         self._config_logger = logger   
         self._config_logger.info("Setting up the bot... Please wait a moment.")
 

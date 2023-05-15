@@ -1,10 +1,11 @@
-from pydantic import BaseModel
+from dataclasses import dataclass
 from .screen import Screen
 from typing import Dict
 from abc import ABC, abstractmethod
 
 
-class ChatOutput(BaseModel):
+@dataclass
+class ChatOutput:
     output: Dict
 
     @property

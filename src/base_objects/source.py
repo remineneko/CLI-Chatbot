@@ -2,9 +2,8 @@ from abc import abstractmethod, ABC
 
 
 class InputStream(ABC):
-    def __init__(self, input_stream, **kwargs):
+    def __init__(self, input_stream):
         self.input_stream = input_stream
-        self.__dict__.update(kwargs)
 
     @property
     @abstractmethod
