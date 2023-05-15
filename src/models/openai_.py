@@ -4,7 +4,7 @@ from src.logger import ChatbotLogger
 from src.exceptions import InvalidAPIKey, InvalidPrompt
 
 import openai
-from typing import Union, List, Dict, Any, Literal, Optional
+from typing import Union, List, Dict, Any, Optional
 
 
 class OpenAIChatOutput(ChatOutput):
@@ -77,11 +77,26 @@ class OpenAI(LLMModel):
         self.logit_bias = logit_bias
         self.logprobs = log_probs
 
-    def generate(self, prompt: Union[str,InputStream, List[str], List[Dict[str, str]]], suffix:str = None, echo: bool = False, stop: Union[str, List[str]] = None) -> ChatOutput:
+    def generate(
+            self, 
+            prompt: Union[str, InputStream, List[str], List[Dict[str, str]]], 
+            suffix:str = None, 
+            echo: bool = False, 
+            stop: Union[str, List[str]] = None
+        ) -> ChatOutput:
         if not prompt:
             raise InvalidPrompt("The given prompt is invalid")
         if isinstance(prompt, InputStream):
             prompt = prompt.prompt
+        num_prompts = 1 if isinstance(prompt, str) else len(prompt)
+        self.logger.info(f"Number of prompts given: {num_prompts}")
+
+        for i in len(num_prompts):
+            if isinstance(prompt, str):
+                self.logger.info(f"Prompt {i+1}: {prompt}")
+            else:
+                self.logger.info(f"Prompt {i+1}: {prompt[0]}")
+
         if self.model in self.CHAT_COMPLETION_MODELS:
             if isinstance(prompt, str):
                 prompt = [
@@ -98,7 +113,7 @@ class OpenAI(LLMModel):
                     }
                     for i in prompt
                 ]
-            return OpenAIChatOutput(openai.ChatCompletion(
+            generated = OpenAIChatOutput(openai.ChatCompletion(
                 model = self.model,
                 prompt = prompt,
                 suffix = suffix,
@@ -116,7 +131,7 @@ class OpenAI(LLMModel):
                 logit_bias=self.logit_bias,
             ))
         else:
-            return OpenAIChatOutput(openai.Completion(
+            generated = OpenAIChatOutput(openai.Completion(
                 model = self.model,
                 prompt = prompt,
                 suffix = suffix,
@@ -133,5 +148,12 @@ class OpenAI(LLMModel):
                 best_of = self.best_of,
                 logit_bias=self.logit_bias,
             ))
+        
+        token_usage = generated.token_usage
+        
+        self.logger.info(f"Generated content: {generated.answer}")
+        self.logger.info(f"Used {token_usage} for the given prompt and generated content.")
 
+        return generated
+        
     
