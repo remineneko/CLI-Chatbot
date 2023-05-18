@@ -3,7 +3,7 @@ from typing import List
 
 
 class Command(ABC):
-    PREFIX = ">>"
+    PREFIX = "!" # change it into env var pls
     @abstractmethod
     def _get_commands(self) -> List[str]:
         """
@@ -18,5 +18,4 @@ class Command(ABC):
 
     def setup(self, cli):
         for command in self._get_commands():
-
             cli.add_command(getattr(self, command), name=self.PREFIX + command)
