@@ -53,13 +53,14 @@ class Ingest(BaseIngest):
             splitted_data, 
             embeddings, 
             persist_directory=PERSIST_DB_FOLDER, 
-            client_settings={
+            client_settings=
                 Settings(
                     chroma_db_impl='duckdb+parquet',
                     persist_directory=PERSIST_DB_FOLDER,
                     anonymized_telemetry=False
-                )
-            }
+                ),
+            collection_name="Rem"
+            
         )
 
         db.persist()
