@@ -16,5 +16,5 @@ class GPT4AllModel(GPT4All):
     def answer(self, prompt: Union[str, List[str]], stops: List[str]=None, callbacks: Callbacks=None):
         if isinstance(prompt, str):
             prompt = [prompt]
-        generated = self.generate(prompt, stops, callbacks)
+        generated: List[Generation] = self.generate(prompt, stops, callbacks)
         return generated.generations[0][0].text

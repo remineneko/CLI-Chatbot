@@ -19,10 +19,10 @@ class CLI(Screen):
     
     @staticmethod
     @click.group()
-    def main_cli():
+    def _cli():
         pass
 
     def run(self):
         CoreCommands().setup(self.main_cli)
         register_repl(self.main_cli)
-        self.main_cli()
+        self._cli()

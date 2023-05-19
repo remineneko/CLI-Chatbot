@@ -23,19 +23,24 @@ from chromadb.config import Settings
 from typing import Union, List
 from pathlib import Path
 
-from src.ingest_data.ingest_source_detector import IngestSource, IngestSourceDetector, IngestURLIdentifier
+from src.ingest_data.ingest_source_detector import IngestSource, IngestSourceDetector, IngestURLIdentifier, IngestURLType
 from src.constants import PERSIST_DB_FOLDER
 
 
-class Ingest:
+class BaseIngest:
+    def __init__(self, source: Union[Path, str]):
+        self._source = source
+        self._type = IngestSourceDetector(self._source).source
+
+
+class Ingest(BaseIngest):
     _INGEST_DICT = {
         IngestSource.FILE: 'IngestFile',
         IngestSource.DIRECTORY: 'IngestFile',
         IngestSource.URL: 'IngestURL'
     }
     def __init__(self, source: Union[Path, str]):
-        self._source = source
-        self._type = IngestSourceDetector(self._source).source
+        super().__init__(source)
 
     def ingest(self):
         data: List[Document] = getattr(sys.modules[__name__], self._INGEST_DICT[self._type])(self._source).extract_data()
@@ -61,7 +66,7 @@ class Ingest:
         db = None
         
 
-class IngestFile(Ingest):
+class IngestFile(BaseIngest):
     _FILE_EXT_MAPPING = {
         ".csv": (CSVLoader, {}),
         ".docx": (UnstructuredWordDocumentLoader, {}),
@@ -94,3 +99,16 @@ class IngestFile(Ingest):
             yield self._single_file_load(os.path.join(folder, file))
 
 
+class IngestURL(BaseIngest):
+    # For now, only readthedocs is supported because im trying to figure out what exactly i want to do for YouTube.
+    _LINK_MAPPING = {
+        IngestURLType.READTHEDOCS: (ReadTheDocsLoader, {})
+    }
+
+    def __init__(self, source: Union[Path, str]):
+        super().__init__(source)
+
+    def extract_data(self):
+        func, args = self._LINK_MAPPING[self._type]
+        return func(self._source, **args)
+    

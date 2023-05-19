@@ -43,14 +43,12 @@ class IngestSourceDetector:
             return False
         
 
+class IngestURLType(Enum):
+    READTHEDOCS = 0
+    YOUTUBE = 1
+
+
 class IngestURLIdentifier:
-    # note: This is terrible design. Will fix when more links are needed to be supported.
-
-    SUPPORTED_SITES = [
-        'readthedocs',
-        'youtube'
-    ]
-
     YOUTUBE_REGEX = r'^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$'
 
     def __init__(self, url: str):
@@ -58,9 +56,9 @@ class IngestURLIdentifier:
 
     def _get_url_type(self):
         if self._is_valid_youtube_link():
-            return 'youtube'
+            return IngestURLType.YOUTUBE
         elif self._is_valid_readthedocs_link():
-            return 'readthedocs'
+            return IngestURLType.READTHEDOCS
 
     def _is_valid_youtube_link(self):
         return bool(re.search(self._YOUTUBE_REGEX, self._url))
