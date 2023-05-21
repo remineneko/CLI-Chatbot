@@ -8,3 +8,7 @@ class InvalidPrompt(Exception):
 
 class UnsupportedIngestSource(Exception):
     pass
+
+
+class UnsupportedModel(Exception):
+    pass

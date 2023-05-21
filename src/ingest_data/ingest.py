@@ -24,7 +24,7 @@ from typing import Union, List
 from pathlib import Path
 
 from src.ingest_data.ingest_source_detector import IngestSource, IngestSourceDetector, IngestURLIdentifier, IngestURLType
-from constants import PERSIST_DB_FOLDER, CHROMA_SETTINGS, HUGGING_FACE_DEFAULT_MODEL, CHROMA_DEFAULT_COLLECTION_NAME
+from constants import PERSIST_DB_FOLDER, CHROMA_DEFAULT_SETTINGS, HUGGING_FACE_DEFAULT_MODEL, CHROMA_DEFAULT_COLLECTION_NAME
 
 
 class BaseIngest:
@@ -53,7 +53,7 @@ class Ingest(BaseIngest):
             splitted_data, 
             embeddings, 
             persist_directory=PERSIST_DB_FOLDER, 
-            client_settings=CHROMA_SETTINGS,
+            client_settings=CHROMA_DEFAULT_SETTINGS,
             collection_name=CHROMA_DEFAULT_COLLECTION_NAME
         )
 

@@ -19,8 +19,9 @@ if not os.path.isdir(PERSIST_DB_FOLDER):
 SRC_FOLDER = os.path.join(ROOT_FOLDER, 'src')
 CONFIG_FOLDER = os.path.join(SRC_FOLDER, 'configs')
 DEFAULT_GPT4ALL_CONFIG = os.path.join(CONFIG_FOLDER, 'default_gpt4all_config.py')
+DEFAULT_CHATBOT_CONFIG = os.path.join(CONFIG_FOLDER, 'default_chatbot_config.py')
 
-CHROMA_SETTINGS = Settings(
+CHROMA_DEFAULT_SETTINGS = Settings(
         chroma_db_impl='duckdb+parquet',
         persist_directory=PERSIST_DB_FOLDER,
         anonymized_telemetry=False

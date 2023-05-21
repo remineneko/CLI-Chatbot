@@ -1,5 +1,4 @@
-from langchain.llms import GPT4All
-from langchain.schema import Generation, LLMResult
+from langchain.schema import Generation
 from langchain.callbacks.manager import Callbacks
 
 from typing import Union, List
@@ -8,7 +7,7 @@ from pathlib import Path
 from src.utils.config import Config
 
 
-class GPT4AllModel_(GPT4All):
+class ModelMixin:
     @classmethod
     def from_cfg(cls, cfg_file: Union[Path, str]):
         return cls(**Config.from_file(cfg_file).cfg.model)

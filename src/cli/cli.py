@@ -1,27 +1,24 @@
-import click
 import sys
 
-from click_repl import register_repl
 from langchain.utilities import GoogleSearchAPIWrapper
 from langchain.vectorstores import Chroma, VectorStore
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.llms.base import LLM
-from langchain.agents import Tool, initialize_agent, LLMSingleActionAgent, AgentExecutor
+from langchain.agents import Tool, LLMSingleActionAgent, AgentExecutor
 from langchain import LLMChain
-
 
 from constants import (
     PERSIST_DB_FOLDER,
     DEFAULT_GPT4ALL_CONFIG, 
     HUGGING_FACE_DEFAULT_MODEL, 
     CHROMA_DEFAULT_COLLECTION_NAME, 
-    CHROMA_SETTINGS,
+    CHROMA_DEFAULT_SETTINGS,
     DEFAULT_CHATBOT_PROMPT,
     CHATBOT_NAME
 )
 
+from src.models.model_picker import get_model
 from src.base_objects import Screen, OutputSource
-from src.models.gpt4all import GPT4AllModel_
 from src.utils.custom_memory import ConversationMemory
 from src.utils.custom_output import CustomOutputParser
 from src.utils.custom_prompt_template import CustomPromptTemplate
@@ -43,7 +40,7 @@ class CLI(Screen):
     def _cli(model: LLM, vector_db: VectorStore, memory: ConversationMemory):
         # retrieval_tool = Tool(
         #     name='Core Memory',
-        #     description=f"Contains completed conversations between the user and {CHATBOT_NAME} in the past",
+        #     description=f"Contains completed conversations between the user and {CHATBOT_NAME} in the past and information from various documents.",
         #     func=vector_db.similarity_search
         # )
 
@@ -97,15 +94,15 @@ class CLI(Screen):
             print(res)
 
     def run(self, **kwargs):
-        model = kwargs.get('model',GPT4AllModel_.from_cfg(DEFAULT_GPT4ALL_CONFIG))
+        model_ = kwargs.get('model', get_model('gpt4all').from_cfg(DEFAULT_GPT4ALL_CONFIG))
         vector_db = kwargs.get('vector_db',Chroma(
             persist_directory=PERSIST_DB_FOLDER, 
             embedding_function=HuggingFaceEmbeddings(
                 model_name=HUGGING_FACE_DEFAULT_MODEL
             ), 
-            client_settings=CHROMA_SETTINGS, 
+            client_settings=CHROMA_DEFAULT_SETTINGS, 
             collection_name=CHROMA_DEFAULT_COLLECTION_NAME
             )
         )
         memory = kwargs.get('memory', ConversationMemory())
-        self._cli(model, vector_db, memory)
+        self._cli(model_, vector_db, memory)
