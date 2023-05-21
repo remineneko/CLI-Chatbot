@@ -4,3 +4,11 @@ class InvalidAPIKey(Exception):
 
 class InvalidPrompt(Exception):
     pass
+
+
+class UnsupportedIngestSource(Exception):
+    pass
+
+
+class UnsupportedModel(Exception):
+    pass

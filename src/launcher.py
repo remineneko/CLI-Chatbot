@@ -1,2 +1,0 @@
-class Launcher:
-    pass

@@ -2,6 +2,7 @@ import logging
 import os
 from typing import Union, List
 
+
 class ChatbotHandler(logging.StreamHandler):
     def __init__(self):
         logging.StreamHandler.__init__(self)

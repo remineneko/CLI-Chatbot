@@ -146,6 +146,17 @@ cython_debug/
 
 # Unwanted files
 test.py
+test*
+*_prompt.txt
+
+# No, I don't want models to be added to GitHub.
+ggml* 
+
+# and my vectordb folder
+chromadb/
+
+# temporarily ignore .env files
+*.env
 
 # PyCharm
 #  JetBrains specific template is maintainted in a separate JetBrains.gitignore that can

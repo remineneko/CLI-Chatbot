@@ -12,4 +12,4 @@
     [ ] Able to store chat history.
         [ ] History should include date, conversation ID and such.
 
-other subtaks will be updated here.
+other subtasks will be updated here.
