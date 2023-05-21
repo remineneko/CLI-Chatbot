@@ -1,21 +1,19 @@
-# YOLOv6m model
 model = dict(
     cache = None, 
     verbose = False, 
     callbacks = None, 
     callback_manager = None,
     model = "ggml-gpt4all-j.bin",
-    backend = 'gptj',
     n_ctx = 512,
     n_parts = -1,
-    seed = 0,
+    seed = -1,
     f16_kv = False,
     logits_all = False,
     vocab_only = False,
     use_mlock = False,
     embedding = False,
     n_threads = 4,
-    n_predict = 256,
+    n_predict = 100000,
     temp = 0.8,
     top_p = 0.95,
     top_k = 40,
@@ -23,8 +21,8 @@ model = dict(
     stop = [],
     repeat_last_n = 64,
     repeat_penalty = 1.3,
-    n_batch = 1,
+    n_batch = 2,
     streaming = False,
-    client = None
+    context_erase = 0.5
 )
 

@@ -24,7 +24,7 @@ from typing import Union, List
 from pathlib import Path
 
 from src.ingest_data.ingest_source_detector import IngestSource, IngestSourceDetector, IngestURLIdentifier, IngestURLType
-from src.constants import PERSIST_DB_FOLDER
+from constants import PERSIST_DB_FOLDER, CHROMA_SETTINGS, HUGGING_FACE_DEFAULT_MODEL, CHROMA_DEFAULT_COLLECTION_NAME
 
 
 class BaseIngest:
@@ -47,20 +47,14 @@ class Ingest(BaseIngest):
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
         splitted_data = text_splitter.split_documents(data)
 
-        embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2')
+        embeddings = HuggingFaceEmbeddings(model_name=HUGGING_FACE_DEFAULT_MODEL)
 
         db = Chroma.from_documents(
             splitted_data, 
             embeddings, 
             persist_directory=PERSIST_DB_FOLDER, 
-            client_settings=
-                Settings(
-                    chroma_db_impl='duckdb+parquet',
-                    persist_directory=PERSIST_DB_FOLDER,
-                    anonymized_telemetry=False
-                ),
-            collection_name="Rem"
-            
+            client_settings=CHROMA_SETTINGS,
+            collection_name=CHROMA_DEFAULT_COLLECTION_NAME
         )
 
         db.persist()

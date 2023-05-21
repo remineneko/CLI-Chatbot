@@ -1,1 +1,1 @@
-from .gpt4all import GPT4AllModel
+from .gpt4all import GPT4AllModel_
