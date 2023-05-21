@@ -18,8 +18,6 @@ from langchain.vectorstores import Chroma
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.docstore.document import Document
 
-from chromadb.config import Settings
-
 from typing import Union, List
 from pathlib import Path
 
@@ -59,6 +57,8 @@ class Ingest(BaseIngest):
 
         db.persist()
         db = None
+
+        print(f"Completed ingesting data from {self._source}")
         
 
 class IngestFile(BaseIngest):

@@ -148,6 +148,7 @@ cython_debug/
 test.py
 test*
 *_prompt.txt
+*.pdf
 
 # No, I don't want models to be added to GitHub.
 ggml* 

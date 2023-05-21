@@ -38,11 +38,11 @@ class CLI(Screen):
 
     @staticmethod
     def _cli(model: LLM, vector_db: VectorStore, memory: ConversationMemory):
-        # retrieval_tool = Tool(
-        #     name='Core Memory',
-        #     description=f"Contains completed conversations between the user and {CHATBOT_NAME} in the past and information from various documents.",
-        #     func=vector_db.similarity_search
-        # )
+        retrieval_tool = Tool(
+            name='Core Memory',
+            description=f"Contains completed conversations between the user and {CHATBOT_NAME} in the past and information from various documents.",
+            func=vector_db.similarity_search
+        )
 
         search = GoogleSearchAPIWrapper()
         search_tool = Tool(
@@ -51,7 +51,7 @@ class CLI(Screen):
                 func=search.run
             )
 
-        tools = [search_tool]
+        tools = [retrieval_tool, search_tool]
     
         chatbot_prompt = CustomPromptTemplate(
             input_variables=['input','intermediate_steps'], 
@@ -60,8 +60,6 @@ class CLI(Screen):
         )
 
         cqa = LLMChain(llm=model, prompt=chatbot_prompt)
-
-        
 
         output_parser = CustomOutputParser()
         tools_names = [tool.name for tool in tools]
