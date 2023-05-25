@@ -7,8 +7,8 @@ load_dotenv()
 GOOGLE_CSE_ID = os.environ.get("GOOGLE_CSE_ID")
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 CHROMA_DEFAULT_COLLECTION_NAME = os.environ.get('CHROMA_DEFAULT_COLLECTION_NAME')
-CLI_DEFAULT_PREFIX = os.environ.get('CLI_DEFAULT_PREFIX')
 CHATBOT_NAME = os.environ.get('CHATBOT_NAME')
+DEFAULT_USER_NAME = os.environ.get("USER_DEFAULT_NAME")
 
 ROOT_FOLDER = os.path.dirname(os.path.realpath(__file__))
 

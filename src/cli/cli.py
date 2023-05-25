@@ -1,23 +1,16 @@
 import sys
 
 from langchain.utilities import GoogleSearchAPIWrapper
-from langchain.vectorstores import Chroma, VectorStore
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.vectorstores import VectorStore
 from langchain.llms.base import LLM
-from langchain.agents import Tool, LLMSingleActionAgent, AgentExecutor
+from langchain.agents import Tool, LLMSingleActionAgent, AgentExecutor, initialize_agent, AgentType
 from langchain import LLMChain
 
 from constants import (
-    PERSIST_DB_FOLDER,
-    DEFAULT_GPT4ALL_CONFIG, 
-    HUGGING_FACE_DEFAULT_MODEL, 
-    CHROMA_DEFAULT_COLLECTION_NAME, 
-    CHROMA_DEFAULT_SETTINGS,
     DEFAULT_CHATBOT_PROMPT,
     CHATBOT_NAME
 )
 
-from src.models.model_picker import get_model
 from src.base_objects import Screen, OutputSource
 from src.utils.custom_memory import ConversationMemory
 from src.utils.custom_output import CustomOutputParser
@@ -54,12 +47,12 @@ class CLI(Screen):
         tools = [retrieval_tool, search_tool]
     
         chatbot_prompt = CustomPromptTemplate(
-            input_variables=['input','intermediate_steps'], 
+            input_variables=['input', 'chat_history', 'intermediate_steps'], 
             template = DEFAULT_CHATBOT_PROMPT,
             tools=tools
         )
 
-        cqa = LLMChain(llm=model, prompt=chatbot_prompt)
+        cqa = LLMChain(llm=model, prompt=chatbot_prompt, verbose=False)
 
         output_parser = CustomOutputParser()
         tools_names = [tool.name for tool in tools]
@@ -87,20 +80,10 @@ class CLI(Screen):
             # Get the answer from the chain
             res = chat_agent.run(query)    
 
-            # Print the result
-            print(f"\n{CHATBOT_NAME}: ")
-            print(res)
+            print(f"{CHATBOT_NAME}:{res}")
 
     def run(self, **kwargs):
-        model_ = kwargs.get('model', get_model('gpt4all').from_cfg(DEFAULT_GPT4ALL_CONFIG))
-        vector_db = kwargs.get('vector_db',Chroma(
-            persist_directory=PERSIST_DB_FOLDER, 
-            embedding_function=HuggingFaceEmbeddings(
-                model_name=HUGGING_FACE_DEFAULT_MODEL
-            ), 
-            client_settings=CHROMA_DEFAULT_SETTINGS, 
-            collection_name=CHROMA_DEFAULT_COLLECTION_NAME
-            )
-        )
-        memory = kwargs.get('memory', ConversationMemory())
+        model_ = kwargs.get('model')
+        vector_db = kwargs.get('vector_db')
+        memory = kwargs.get('memory')
         self._cli(model_, vector_db, memory)

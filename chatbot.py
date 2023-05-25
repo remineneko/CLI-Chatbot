@@ -3,6 +3,7 @@ import click
 from typing import Union
 from pathlib import Path
 from click_repl import register_repl
+from pydantic.error_wrappers import ValidationError
 
 from constants import DEFAULT_CHATBOT_CONFIG
 from src.utils.config import Config
@@ -29,7 +30,7 @@ def start(config_file: Union[Path, str]):
     model_name, model_config_file, model_vector_db, chat_type = load_config(config_file)
     model = get_model(model_name).from_cfg(model_config_file)
     if chat_type == "cli":
-        CLI().run(model=model, vector_db=model_vector_db, memory = ConversationMemory())
+        CLI().run(model=model, vector_db=model_vector_db, memory = ConversationMemory(memory_key='chat_history'))
 
 
 @main.command()

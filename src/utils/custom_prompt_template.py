@@ -1,6 +1,7 @@
 from typing import List
 from langchain.agents import Tool
 from langchain.prompts import StringPromptTemplate
+from constants import DEFAULT_USER_NAME
 
 
 # Set up a prompt template.
@@ -17,7 +18,7 @@ class CustomPromptTemplate(StringPromptTemplate):
         intermediate_steps = kwargs.pop("intermediate_steps")
         thoughts = ""
         for action, observation in intermediate_steps:
-            thoughts += action.log
+            thoughts += action.log + "\n"
             thoughts += f"\nObservation: {observation}\nThought: "
         # Set the agent_scratchpad variable to that value
         kwargs["agent_scratchpad"] = thoughts
@@ -25,4 +26,6 @@ class CustomPromptTemplate(StringPromptTemplate):
         kwargs["tools"] = "\n".join([f"{tool.name}: {tool.description}" for tool in self.tools])
         # Create a list of tool names for the tools provided
         kwargs["tool_names"] = ", ".join([tool.name for tool in self.tools])
+        if DEFAULT_USER_NAME:
+            kwargs['user_name'] = DEFAULT_USER_NAME
         return self.template.format(**kwargs)
