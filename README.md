@@ -1,6 +1,8 @@
 # CLI-Chatbot
 
-A simple CLI-based chatbot. 
+A simple CLI-based chatbot using LangChain, click, SentenceTransformers, and Chroma.
+
+For the default version, the chatbot is also built with GPT4All.
 
 Features (currently having and soon-to-have, hopefully):
 
