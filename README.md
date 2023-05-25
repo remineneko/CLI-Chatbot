@@ -54,5 +54,5 @@ python chatbot.py repl/start/ingest
 
 - Create a script so that the model will be automatically downloaded if the model does not exist in the local machine.
 - Generalize ingest better so that other vector databases can be used.
-- Do more test with 'ggml-gpt4all-j.bin' model to make it work with 
+- Do more test with 'ggml-gpt4all-j.bin' model to make it work with the tools given.
 
