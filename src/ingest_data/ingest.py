@@ -26,22 +26,21 @@ from constants import PERSIST_DB_FOLDER, CHROMA_DEFAULT_SETTINGS, HUGGING_FACE_D
 
 
 class BaseIngest:
-    def __init__(self, source: Union[Path, str]):
+    def __init__(self, source: Union[Path, str], source_type = None):
         self._source = source
-        self._type = IngestSourceDetector(self._source).source
+        self._type = IngestSourceDetector(self._source).source if not source_type else source_type
 
 
-class Ingest(BaseIngest):
+class Ingest:
     _INGEST_DICT = {
         IngestSource.FILE: 'IngestFile',
         IngestSource.DIRECTORY: 'IngestFile',
         IngestSource.URL: 'IngestURL'
     }
-    def __init__(self, source: Union[Path, str]):
-        super().__init__(source)
 
-    def ingest(self):
-        data: List[Document] = getattr(sys.modules[__name__], self._INGEST_DICT[self._type])(self._source).extract_data()
+    def __call__(self, source: Union[Path, str]):
+        source_type = IngestSourceDetector(source).source
+        data: List[Document] = getattr(sys.modules[__name__], self._INGEST_DICT[source_type])(source).extract_data()
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
         splitted_data = text_splitter.split_documents(data)
 
@@ -58,7 +57,7 @@ class Ingest(BaseIngest):
         db.persist()
         db = None
 
-        print(f"Completed ingesting data from {self._source}")
+        print(f"Completed ingesting data from {source}")
         
 
 class IngestFile(BaseIngest):

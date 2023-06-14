@@ -35,10 +35,10 @@ def get_models_from_langchain():
 
 MODELS = get_models_from_langchain()
 
+
 def get_model(name):
     obtained_model = MODELS.get(name, None)
     if obtained_model:
         return type(f'{obtained_model.__name__}Model', (obtained_model, ModelMixin), {})
     else:
         raise UnsupportedModel("Given model is not supported by LangChain for the time being.")
-    

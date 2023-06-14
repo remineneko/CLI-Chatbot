@@ -1,17 +1,8 @@
-import random
-
-randomized_seed = random.randint(0, 10**15) # I could go from -1, but -1 itself is randomizing.
-print(f"Testing on seed {randomized_seed}")
-
 model = dict(
-    cache = None, 
-    verbose = False, 
-    callbacks = None, 
-    callback_manager = None,
     model = "ggml-gpt4all-j.bin",
     n_ctx = 512,
     n_parts = -1,
-    seed = randomized_seed,
+    seed = -1,
     f16_kv = False,
     logits_all = False,
     vocab_only = False,

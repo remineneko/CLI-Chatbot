@@ -8,11 +8,12 @@ from langchain import LLMChain
 
 from constants import (
     DEFAULT_CHATBOT_PROMPT,
-    CHATBOT_NAME
+    CHATBOT_NAME,
+    DEFAULT_USER_NAME
 )
 
 from src.base_objects import Screen, OutputSource
-from src.utils.custom_memory import ConversationMemory
+from src.utils.custom_memory import ConversationMemory, save_message
 from src.utils.custom_output import CustomOutputParser
 from src.utils.custom_prompt_template import CustomPromptTemplate
 
@@ -26,21 +27,21 @@ class StandardOutput(OutputSource):
 
 
 class CLI(Screen):
-    def __init__(self, output_source=StandardOutput, voice_output=None, voice_input=None):
+    def __init__(self, output_source=StandardOutput, voice_output=None, voice_input=None, verbose=False):
         super().__init__(output_source, voice_input, voice_output)
+        self._verbose = verbose
 
-    @staticmethod
-    def _cli(model: LLM, vector_db: VectorStore, memory: ConversationMemory):
+    def _cli(self, model: LLM, vector_db: VectorStore, memory: ConversationMemory):
         retrieval_tool = Tool(
-            name='Core Memory',
-            description=f"Contains completed conversations between the user and {CHATBOT_NAME} in the past and information from various documents.",
+            name='Memory',
+            description=f"Contains past conversations between the user and {CHATBOT_NAME} and information from various documents that {CHATBOT_NAME} has read.",
             func=vector_db.similarity_search
         )
 
         search = GoogleSearchAPIWrapper()
         search_tool = Tool(
-                name = "Google Search",
-                description="Search Google for recent results.",
+                name = "Internet",
+                description=f"Tool to look up answers that {CHATBOT_NAME} does not know.",
                 func=search.run
             )
 
@@ -52,35 +53,37 @@ class CLI(Screen):
             tools=tools
         )
 
-        cqa = LLMChain(llm=model, prompt=chatbot_prompt, verbose=False)
+        llm_chain = LLMChain(llm=model, prompt=chatbot_prompt, verbose=self._verbose)
 
         output_parser = CustomOutputParser()
         tools_names = [tool.name for tool in tools]
         agent = LLMSingleActionAgent(
-            llm_chain=cqa,
+            llm_chain=llm_chain,
             output_parser=output_parser,
-            stop=["\nObservation:"],
-            allowed_tools=tools_names
+            stop=["\nObservation"],     #  kind of required if I want the chatbot to output something at all.
+            allowed_tools=tools_names,
+            verbose=self._verbose
         )
 
         chat_agent = AgentExecutor.from_agent_and_tools(
             agent=agent, 
             tools=tools, 
-            verbose=False,
-            memory=memory,
+            verbose=self._verbose,
+            memory=memory
         )
 
-        cont_chatting = True
-        while cont_chatting:
+        while True:
             query = input("\nUser: ")
-            if query == "exit":
-                cont_chatting = False
-                memory.save_to_db(v_db=vector_db, ai_prefix=CHATBOT_NAME)
-            
+            if query == "exit" or not query:
+                break
+
+            save_message(query, DEFAULT_USER_NAME, vector_db)
             # Get the answer from the chain
             res = chat_agent.run(query)    
+            if res:
+                save_message(res, CHATBOT_NAME, vector_db)
 
-            print(f"{CHATBOT_NAME}:{res}")
+            print(f"{CHATBOT_NAME}: {res}")
 
     def run(self, **kwargs):
         model_ = kwargs.get('model')
